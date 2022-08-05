@@ -63,8 +63,6 @@ jobs:
     name: "Publish"
     if: startsWith(github.ref, 'refs/tags/')
     needs: ["build", "provenance"]
-    environment:
-      name: "release"
     runs-on: "ubuntu-latest"
 
     steps:
@@ -77,4 +75,5 @@ jobs:
       uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
       with:
         files: |
-          dist/*
+          *.whl
+          *.tar.gz
