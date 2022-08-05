@@ -32,7 +32,9 @@ jobs:
         SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct) \
         python -m build
 
-        # Set the hashes output
+    - name: "Generate hashes"
+      id: hash
+      run: |
         echo "::set-output name=hashes::$(sha256sum dist/* | base64 -w0)"
 
     - name: "Upload dists"
