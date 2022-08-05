@@ -46,10 +46,7 @@ jobs:
         retention-days: 5
 
   provenance:
-    name: "Provenance"
-    needs: ["build"]
-    environment:
-      name: "release"
+    needs: [build]
     permissions:
       actions: read
       id-token: write
@@ -58,7 +55,7 @@ jobs:
     with:
       base64-subjects: "${{ needs.build.outputs.hashes }}"
       # Set a custom name for the provenance attestation.
-      attestation-name: "secure-python-package.intoto.jsonl"
+      attestation-name: "artifacts.intoto.jsonl"
       # Upload provenance to a new release
       upload-assets: true
 
