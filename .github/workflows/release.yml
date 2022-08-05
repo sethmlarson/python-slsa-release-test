@@ -35,7 +35,7 @@ jobs:
     - name: "Generate hashes"
       id: hash
       run: |
-        echo "::set-output name=hashes::$(sha256sum dist/* | base64 -w0)"
+        cd dist && echo "::set-output name=hashes::$(sha256sum * | base64 -w0)"
 
     - name: "Upload dists"
       uses: "actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8"
