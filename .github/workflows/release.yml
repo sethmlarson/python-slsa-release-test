@@ -6,21 +6,8 @@ on:
       - "*"
 
 jobs:
-  lightweight-tag:
-    name: "Ensure git tag is lightweight"
-    runs-on: "ubuntu-latest"
-    steps:
-    - name: "Ensure git tag is lightweight"
-      run: |
-        export TAG_TYPE="$(git cat-file -t ${{ github.ref_name }})"
-        if [[ "$TAG_TYPE" != "commit" ]]; then
-          echo "SLSA requires a lightweight git tag. Use 'git tag ${{ github.ref_name }}' or the GitHub UI to create a tag."
-          exit 1
-        fi
-
   build:
     name: "Build"
-    needs: [lightweight-tag]
     outputs:
       hashes: ${{ steps.hash.outputs.hashes }}
     runs-on: "ubuntu-latest"
@@ -83,10 +70,10 @@ jobs:
       uses: "actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741"
       with:
         name: "dist"
+        path: "dist/"
 
-    - name: "Upload assets to GitHub Release"
-      uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
-      with:
-        files: |
-          *.whl
-          *.tar.gz
+    - name: "Upload dists to GitHub Release"
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      run: |
+        gh release upload ${{ github.ref_name }} dist/*
