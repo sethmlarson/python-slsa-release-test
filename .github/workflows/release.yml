@@ -1,0 +1,84 @@
+name: "Publish"
+
+on:
+  push:
+    tags:
+      - "*"
+
+permissions: "read-all"
+
+jobs:
+  build:
+    name: "Build"
+    outputs:
+      hashes: ${{ steps.hash.outputs.hashes }}
+    runs-on: "ubuntu-latest"
+    environment:
+      name: "release"
+
+    steps:
+    - name: "Checkout repository"
+      uses: "actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846"
+
+    - name: "Setup Python"
+      uses: "actions/setup-python@d09bd5e6005b175076f227b13d9730d56e9dcfcb"
+      with:
+        python-version: "3.x"
+
+    - name: "Install dependencies"
+      run: |
+        python -m pip install -r requirements/build.txt
+
+    - name: "Build dists"
+      run: |
+        SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct) \
+        python -m build
+
+        # Set the hashes output
+        echo "::set-output name=hashes::$(sha256sum dist/* | base64 -w0)"
+
+    - name: "Upload dists"
+      uses: "actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8"
+      with:
+        name: "dist"
+        path: "dist/"
+        if-no-files-found: error
+        retention-days: 5
+
+  provenance:
+    name: "Provenance"
+    needs: ["build"]
+    environment:
+      name: "release"
+    permissions:
+      actions: read
+      id-token: write
+      contents: read
+    runs-on: "ubuntu-latest"
+
+    steps:
+    - uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.2.0
+      with:
+        base64-subjects: "${{ needs.build.outputs.hashes }}"
+        attestation-name: "secure-python-package.intoto.jsonl"
+        upload-assets: true
+
+  publish:
+    name: "Publish"
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: ["build", "provenance"]
+    environment:
+      name: "release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+    - name: "Download dists"
+      uses: "actions/download-artifact@fb598a63ae348fa914e94cd0ff38f362e927b741"
+      with:
+        name: "dist"
+
+    - name: "Upload assets to GitHub Release"
+      uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
+      with:
+        files: |
+          dist/*
