@@ -6,8 +6,21 @@ on:
       - "*"
 
 jobs:
+  lightweight-tag:
+    name: "Ensure git tag is lightweight"
+    runs-on: "ubuntu-latest"
+    steps:
+    - name: "Ensure git tag is lightweight"
+      run: |
+        export TAG_TYPE="$(git cat-file -t ${{ github.ref_name }})"
+        if [[ "$TAG_TYPE" != "commit" ]]; then
+          echo "SLSA requires a lightweight git tag. Use 'git tag ${{ github.ref_name }}' or the GitHub UI to create a tag."
+          exit 1
+        fi
+
   build:
     name: "Build"
+    needs: [lightweight-tag]
     outputs:
       hashes: ${{ steps.hash.outputs.hashes }}
     runs-on: "ubuntu-latest"
