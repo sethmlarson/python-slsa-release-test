@@ -1,10 +1,10 @@
 build==0.8.0 \
     --hash=sha256:19b0ed489f92ace6947698c3ca8436cb0556a66e2aa2d34cd70e2a5d27cd0437 \
     --hash=sha256:887a6d471c901b1a6e6574ebaeeebb45e5269a79d095fe9a8f88d6614ed2e5f0
-    # via -r requirements/build.in
-certifi==2022.6.15 \
-    --hash=sha256:84c85a9078b11105f04f3036a9482ae10e4621616db313fe045dd24743a0820d \
-    --hash=sha256:fe86415d55e84719d75f8b69414f6438ac3547d2078ab91b67e779ef69378412
+    # via -r build.in
+certifi==2022.6.15.2 \
+    --hash=sha256:0aa1a42fbd57645fabeb6290a7687c21755b0344ecaeaa05f4e9f6207ae2e9a8 \
+    --hash=sha256:aa08c101214127b9b0472ca6338315113c9487d45376fd3e669201b477c71003
     # via requests
 charset-normalizer==2.1.0 \
     --hash=sha256:5189b6f22b01957427f35b6a08d9a0bc45b46d3788ef5a92e978433c7a35f8a5 \
@@ -17,7 +17,7 @@ docutils==0.19 \
 flit==3.7.1 \
     --hash=sha256:06a93a6737fa9380ba85fe8d7f28efb6c93c4f4ee9c7d00cc3375a81f33b91a4 \
     --hash=sha256:3c9bd9c140515bfe62dd938c6610d10d6efb9e35cc647fc614fe5fb3a5036682
-    # via -r requirements/build.in
+    # via -r build.in
 flit-core==3.7.1 \
     --hash=sha256:14955af340c43035dbfa96b5ee47407e377ee337f69e70f73064940d27d0a44f \
     --hash=sha256:e454fdbf68c7036e1c7435ec7479383f9d9a1650ca5b304feb184eba1efcdcef
